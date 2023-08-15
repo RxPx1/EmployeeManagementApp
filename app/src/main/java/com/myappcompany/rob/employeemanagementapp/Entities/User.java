@@ -1,15 +1,56 @@
 package com.myappcompany.rob.employeemanagementapp.Entities;
 
-
-import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-@Entity
 public class User {
+    private int userID;
+    private String username;
+    private String passcode;
 
-    @PrimaryKey
-    @NonNull
-    String username;
 
+    public User(int userID, String username, String passcode) {
+        this.userID = userID;
+        this.username = username;
+        this.passcode = passcode;
+
+    }
+
+
+
+
+    public User(int userID) {
+
+        this.userID = userID;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+
+
+
+
+    public String getUserName() {
+        return username;
+    }
+
+    public void setUserName(String userName) {
+        this.username = userName;
+    }
+
+    public String getUserPassCode() {
+        return passcode;
+    }
+
+    public void setUserPassCode(String userPassCode) {
+        this.passcode = userPassCode;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userID=" + userID +
+                ", userName='" + username + '\'' +
+                ", userPassCode='" + passcode + '\'' +
+                '}';
+    }
 }

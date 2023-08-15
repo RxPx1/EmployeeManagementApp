@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define the user_list array -->
+    <string-array name="user_list">
+        <item>User 1</item>
+        <item>User 2</item>
+        <item>User 3</item>
+        <!-- Add more user items as needed -->
+    </string-array>
+
+    <!-- Define the action_list array -->
+    <string-array name="action_list">
+        <item>Add User</item>
+        <item>Delete User</item>
+        <item>Employee Hours</item>
+        <item>Report Pay Period</item>
+        <item>Change Admin Login</item>
+        <!-- Add more action items as needed -->
+    </string-array>
+</resources>
