@@ -138,4 +138,33 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         return userList;
     }
 
+    public void deleteUserByUsername(String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_USERS, COLUMN_USERNAME + " = ?", new String[]{username});
+        db.close();
+    }
+
+
+    public List<User> getUserList() {
+        List<User> userList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSCODE},
+                null, null, null, null, null);
+
+        while (cursor.moveToNext()) {
+            int userID = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+            String username = cursor.getString(cursor.getColumnIndex(COLUMN_USERNAME));
+            String passcode = cursor.getString(cursor.getColumnIndex(COLUMN_PASSCODE));
+
+            User user = new User(userID, username, passcode);
+            userList.add(user);
+        }
+
+        cursor.close();
+        db.close();
+
+        return userList;
+    }
+
 }
