@@ -1,18 +1,15 @@
 package com.myappcompany.rob.employeemanagementapp.database;
-
 import java.util.Base64;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class CryptoUtils {
 
-    private static final String KEY_ALGORITHM = "DESede"; // Triple DES
-    private static final String CIPHER_ALGORITHM = "DESede/ECB/PKCS5Padding"; // ECB mode with PKCS5 padding
+    private static final String KEY_ALGORITHM = "DESede";
+    private static final String CIPHER_ALGORITHM = "DESede/ECB/PKCS5Padding";
 
-    private static final String SECRET_KEY = "ABCDE123456ABCDE"; // Replace with your secret key
+    private static final String SECRET_KEY = "ABCDE123456ABCDE";
 
     public static String encryptToBase64(String plaintext) {
         try {

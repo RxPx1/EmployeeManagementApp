@@ -24,6 +24,7 @@ public class AdminActivity extends AppCompatActivity {
     private Spinner userSpinner2;
     private Button addButton;
     private Button deleteButton;
+    private Button changeAdminLoginButton;
     private UserDatabaseHelper databaseHelper;
     private ArrayAdapter<String> userAdapter;
     private ArrayAdapter<String> userAdapter2;
@@ -53,6 +54,16 @@ public class AdminActivity extends AppCompatActivity {
         refreshUserSpinner();
         refreshUserSpinner2();
 
+        changeAdminLoginButton = findViewById(R.id.button9);
+
+        changeAdminLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminActivity.this, ChangeAdminAccount.class);
+                startActivity(intent);
+            }
+        });
+
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,19 +79,17 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("AdminActivity", "Delete button clicked");
-                    Object selectedUserObject = userSpinner.getSelectedItem();
-                        String selectedUser = selectedUserObject.toString();
-                        Log.d("AdminActivity", "Selected User: " + selectedUser);
-                            databaseHelper.deleteUserByUsername(selectedUser); // Call the new deleteUser method
-                            Log.d("AdminActivity", "Deleted user: " + selectedUser);
-                            refreshUserSpinner();
-                            refreshUserSpinner2();
-                            Toast.makeText(AdminActivity.this, "User deleted: " + selectedUser, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(AdminActivity.this, "Error deleting user", Toast.LENGTH_SHORT).show();
+                Object selectedUserObject = userSpinner.getSelectedItem();
+                String selectedUser = selectedUserObject.toString();
+                Log.d("AdminActivity", "Selected User: " + selectedUser);
+                databaseHelper.deleteUserByUsername(selectedUser); // Call the new deleteUser method
+                Log.d("AdminActivity", "Deleted user: " + selectedUser);
+                refreshUserSpinner();
+                refreshUserSpinner2();
+                Toast.makeText(AdminActivity.this, "User deleted: " + selectedUser, Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminActivity.this, "Error deleting user", Toast.LENGTH_SHORT).show();
             }
         });
-
-
     }
 
     @Override
@@ -98,7 +107,7 @@ public class AdminActivity extends AppCompatActivity {
         List<String> usernameList = new ArrayList<>();
 
         for (User user : userList) {
-            if (!user.getUsername().equals("admin")) {
+            if (user.getUserID() != 1) {
                 usernameList.add(user.getUsername());
             }
         }
@@ -120,7 +129,7 @@ public class AdminActivity extends AppCompatActivity {
         List<String> usernameList = new ArrayList<>();
 
         for (User user : userList) {
-            if (!user.getUsername().equals("admin")) {
+            if (user.getUserID() != 1) {
                 usernameList.add(user.getUsername());
             }
         }
@@ -135,3 +144,4 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 }
+

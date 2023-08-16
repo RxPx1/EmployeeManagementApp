@@ -23,10 +23,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PASSCODE = "userPassCode";
 
 
-    private static final String CREATE_TABLE_USERS = "CREATE TABLE " + TABLE_USERS +
-            "(" + COLUMN_ID + " INTEGER PRIMARY KEY," +
-            COLUMN_USERNAME + " TEXT," +
-            COLUMN_PASSCODE + " TEXT)";
+    private static final String CREATE_TABLE_USERS = "CREATE TABLE " + TABLE_USERS + "(" + COLUMN_ID + " INTEGER PRIMARY KEY," + COLUMN_USERNAME + " TEXT," + COLUMN_PASSCODE + " TEXT)";
 
 
     public UserDatabaseHelper(Context context) {
@@ -68,10 +65,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
 
     public User getUserByUsernameAndPassword(String username, String passcode) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSCODE},
-                COLUMN_USERNAME + " = ? AND " + COLUMN_PASSCODE + " = ?",
-                new String[]{username, CryptoUtils.encryptToBase64(passcode)},
-                null, null, null);
+        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSCODE}, COLUMN_USERNAME + " = ? AND " + COLUMN_PASSCODE + " = ?", new String[]{username, CryptoUtils.encryptToBase64(passcode)}, null, null, null);
 
         User user = null;
         if (cursor.moveToFirst()) {
@@ -93,15 +87,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = db.query(
-                    TABLE_USERS,
-                    new String[]{COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSCODE},
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-            );
+            cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSCODE}, null, null, null, null, null);
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -130,8 +116,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         List<User> userList = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSCODE},
-                null, null, null, null, null);
+        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSCODE}, null, null, null, null, null);
 
         while (cursor.moveToNext()) {
             int userID = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
@@ -147,5 +132,23 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
 
         return userList;
     }
+
+    public boolean updateAdminLogin(String newUsername, String newPasscode) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        // Encrypt the new passcode
+        String encryptedPasscode = CryptoUtils.encryptToBase64(newPasscode);
+
+        values.put(COLUMN_USERNAME, newUsername);
+        values.put(COLUMN_PASSCODE, encryptedPasscode);
+
+        int updatedRows = db.update(TABLE_USERS, values, COLUMN_ID + " = ?", new String[]{"1"}); // Assuming admin's userID is always 1
+
+        db.close();
+
+        return updatedRows > 0;
+    }
+
 
 }

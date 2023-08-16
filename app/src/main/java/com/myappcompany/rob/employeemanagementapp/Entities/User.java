@@ -28,9 +28,6 @@ public class User {
     }
 
 
-
-
-
     public String getUserName() {
         return username;
     }
@@ -49,10 +46,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "userID=" + userID +
-                ", userName='" + username + '\'' +
-                ", userPassCode='" + passcode + '\'' +
-                '}';
+        return "User{" + "userID=" + userID + ", userName='" + username + '\'' + ", userPassCode='" + passcode + '\'' + '}';
     }
 }

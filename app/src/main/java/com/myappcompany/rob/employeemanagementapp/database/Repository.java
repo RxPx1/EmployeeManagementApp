@@ -20,15 +20,7 @@ public class Repository {
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
 
-        try (SQLiteDatabase db = dbHelper.getReadableDatabase();
-             Cursor cursor = db.query(
-                     UserDatabaseHelper.TABLE_USERS,
-                     new String[]{UserDatabaseHelper.COLUMN_ID, UserDatabaseHelper.COLUMN_USERNAME, UserDatabaseHelper.COLUMN_PASSCODE},
-                     null,
-                     null,
-                     null,
-                     null,
-                     null)) {
+        try (SQLiteDatabase db = dbHelper.getReadableDatabase(); Cursor cursor = db.query(UserDatabaseHelper.TABLE_USERS, new String[]{UserDatabaseHelper.COLUMN_ID, UserDatabaseHelper.COLUMN_USERNAME, UserDatabaseHelper.COLUMN_PASSCODE}, null, null, null, null, null)) {
 
             while (cursor.moveToNext()) {
                 int id = cursor.getInt(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_ID));
@@ -49,15 +41,7 @@ public class Repository {
     public User getUserById(int id) {
         User user = null;
 
-        try (SQLiteDatabase db = dbHelper.getReadableDatabase();
-             Cursor cursor = db.query(
-                     UserDatabaseHelper.TABLE_USERS,
-                     new String[]{UserDatabaseHelper.COLUMN_USERNAME, UserDatabaseHelper.COLUMN_PASSCODE},
-                     UserDatabaseHelper.COLUMN_ID + " = ?",
-                     new String[]{String.valueOf(id)},
-                     null,
-                     null,
-                     null)) {
+        try (SQLiteDatabase db = dbHelper.getReadableDatabase(); Cursor cursor = db.query(UserDatabaseHelper.TABLE_USERS, new String[]{UserDatabaseHelper.COLUMN_USERNAME, UserDatabaseHelper.COLUMN_PASSCODE}, UserDatabaseHelper.COLUMN_ID + " = ?", new String[]{String.valueOf(id)}, null, null, null)) {
 
             if (cursor != null && cursor.moveToFirst()) {
                 String userName = cursor.getString(cursor.getColumnIndexOrThrow(UserDatabaseHelper.COLUMN_USERNAME));
