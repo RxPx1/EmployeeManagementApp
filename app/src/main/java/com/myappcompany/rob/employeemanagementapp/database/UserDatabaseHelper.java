@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.myappcompany.rob.employeemanagementapp.Entities.User;
 
@@ -57,27 +58,13 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public boolean isUserExists(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID},
-                COLUMN_USERNAME + " = ?", new String[]{username},
-                null, null, null);
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
+    public void deleteUserByUsername(String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int deletedRows = db.delete(TABLE_USERS, COLUMN_USERNAME + " = ?", new String[]{username});
+        db.close();
+        Log.d("UserDatabaseHelper", "Deleted rows: " + deletedRows);
     }
 
-
-    public boolean isUserValid(String username, String passcode) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_ID},
-                COLUMN_USERNAME + " = ? AND " + COLUMN_PASSCODE + " = ?",
-                new String[]{username, CryptoUtils.encryptToBase64(passcode)},
-                null, null, null);
-        boolean valid = cursor.getCount() > 0;
-        cursor.close();
-        return valid;
-    }
 
     public User getUserByUsernameAndPassword(String username, String passcode) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -136,12 +123,6 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
         }
 
         return userList;
-    }
-
-    public void deleteUserByUsername(String username) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_USERS, COLUMN_USERNAME + " = ?", new String[]{username});
-        db.close();
     }
 
 
