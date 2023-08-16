@@ -21,11 +21,12 @@ import java.util.List;
 public class AdminActivity extends AppCompatActivity {
 
     private Spinner userSpinner;
-    private Spinner actionSpinner;
+    private Spinner userSpinner2;
     private Button addButton;
     private Button deleteButton;
     private UserDatabaseHelper databaseHelper;
     private ArrayAdapter<String> userAdapter;
+    private ArrayAdapter<String> userAdapter2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class AdminActivity extends AppCompatActivity {
         databaseHelper = new UserDatabaseHelper(this);
 
         userSpinner = findViewById(R.id.spinner2);
-        actionSpinner = findViewById(R.id.spinner);
+        userSpinner2 = findViewById(R.id.spinner);
         addButton = findViewById(R.id.button5);
         deleteButton = findViewById(R.id.button6);
 
@@ -44,8 +45,13 @@ public class AdminActivity extends AppCompatActivity {
         userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         userSpinner.setAdapter(userAdapter);
 
+        userAdapter2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<>());
+        userAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        userSpinner2.setAdapter(userAdapter2);
+
         // Populate user spinner with user list from database
         refreshUserSpinner();
+        refreshUserSpinner2();
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -54,8 +60,8 @@ public class AdminActivity extends AppCompatActivity {
                 Intent intent = new Intent(AdminActivity.this, AddNewUser.class);
                 startActivity(intent);
                 refreshUserSpinner();
+                refreshUserSpinner2();
             }
-
         });
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -68,12 +74,21 @@ public class AdminActivity extends AppCompatActivity {
                             databaseHelper.deleteUserByUsername(selectedUser); // Call the new deleteUser method
                             Log.d("AdminActivity", "Deleted user: " + selectedUser);
                             refreshUserSpinner();
+                            refreshUserSpinner2();
                             Toast.makeText(AdminActivity.this, "User deleted: " + selectedUser, Toast.LENGTH_SHORT).show();
                     Toast.makeText(AdminActivity.this, "Error deleting user", Toast.LENGTH_SHORT).show();
             }
         });
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh the spinners when the activity resumes
+        refreshUserSpinner();
+        refreshUserSpinner2();
     }
 
     private void refreshUserSpinner() {
@@ -98,4 +113,25 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
+    private void refreshUserSpinner2() {
+        List<User> userList = databaseHelper.getUserList();
+        Log.d("AdminActivity", "User List Size: " + userList.size());
+
+        List<String> usernameList = new ArrayList<>();
+
+        for (User user : userList) {
+            if (!user.getUsername().equals("admin")) {
+                usernameList.add(user.getUsername());
+            }
+        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                userAdapter2.clear();
+                userAdapter2.addAll(usernameList);
+                userAdapter2.notifyDataSetChanged();
+            }
+        });
+    }
 }
