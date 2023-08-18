@@ -23,6 +23,8 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PASSCODE = "userPassCode";
 
 
+
+
     private static final String CREATE_TABLE_USERS = "CREATE TABLE " + TABLE_USERS + "(" + COLUMN_ID + " INTEGER PRIMARY KEY," + COLUMN_USERNAME + " TEXT," + COLUMN_PASSCODE + " TEXT)";
 
 

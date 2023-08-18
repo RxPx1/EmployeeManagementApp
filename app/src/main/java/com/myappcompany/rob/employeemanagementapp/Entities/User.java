@@ -4,7 +4,33 @@ public class User {
     private int userID;
     private String username;
     private String passcode;
+    private long clockInTime;
+    private long clockOutTime;
+    private double totalHours;
 
+    public long getClockInTime() {
+        return clockInTime;
+    }
+
+    public void setClockInTime(long clockInTime) {
+        this.clockInTime = clockInTime;
+    }
+
+    public long getClockOutTime() {
+        return clockOutTime;
+    }
+
+    public void setClockOutTime(long clockOutTime) {
+        this.clockOutTime = clockOutTime;
+    }
+
+    public double getTotalHours() {
+        return totalHours;
+    }
+
+    public void setTotalHours(double totalHours) {
+        this.totalHours = totalHours;
+    }
 
     public User(int userID, String username, String passcode) {
         this.userID = userID;

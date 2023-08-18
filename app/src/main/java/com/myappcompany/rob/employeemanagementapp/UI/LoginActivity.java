@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.myappcompany.rob.employeemanagementapp.Entities.User;
 import com.myappcompany.rob.employeemanagementapp.R;
+import com.myappcompany.rob.employeemanagementapp.database.TimekeepingDatabaseHelper;
 import com.myappcompany.rob.employeemanagementapp.database.UserDatabaseHelper;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 public class LoginActivity extends AppCompatActivity {
 
     private UserDatabaseHelper databaseHelper;
+    private TimekeepingDatabaseHelper timedatabaseHelper;
     String username;
     String passcode;
 
@@ -29,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         databaseHelper = new UserDatabaseHelper(this);
+        timedatabaseHelper = new TimekeepingDatabaseHelper(this);
 
         // Check if there are any users in the database
         List<User> userList = databaseHelper.getAllUsers();
@@ -59,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             Log.d("LoginActivity", "User is not admin. Starting UserActivity.");
                             Intent intent = new Intent(LoginActivity.this, UserActivity.class);
+                            intent.putExtra("username", username);
+                            intent.putExtra("passcode", passcode);
                             startActivity(intent);
                         }
                     } else {
@@ -71,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 }
 
