@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.myappcompany.rob.employeemanagementapp.R;
+import com.myappcompany.rob.employeemanagementapp.database.TimekeepingDatabaseHelper;
 import com.myappcompany.rob.employeemanagementapp.database.UserDatabaseHelper;
 import com.myappcompany.rob.employeemanagementapp.Entities.User;
 
@@ -28,6 +29,8 @@ public class AdminActivity extends AppCompatActivity {
     private UserDatabaseHelper databaseHelper;
     private ArrayAdapter<String> userAdapter;
     private ArrayAdapter<String> userAdapter2;
+    private Button resetTimeDatabaseButton;
+    private TimekeepingDatabaseHelper timekeepingDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,16 @@ public class AdminActivity extends AppCompatActivity {
         refreshUserSpinner2();
 
         changeAdminLoginButton = findViewById(R.id.button9);
+
+        timekeepingDatabaseHelper = new TimekeepingDatabaseHelper(this);
+        resetTimeDatabaseButton = findViewById(R.id.reset_time_database);
+
+        resetTimeDatabaseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetTimeDatabase();
+            }
+        });
 
         changeAdminLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,6 +155,12 @@ public class AdminActivity extends AppCompatActivity {
                 userAdapter2.notifyDataSetChanged();
             }
         });
+    }
+
+    private void resetTimeDatabase() {
+        timekeepingDatabaseHelper.reopenDatabase();
+        timekeepingDatabaseHelper.getWritableDatabase().execSQL("DELETE FROM " + TimekeepingDatabaseHelper.TABLE_TIMEKEEPING);
+        Toast.makeText(this, "Time database reset", Toast.LENGTH_SHORT).show();
     }
 }
 
