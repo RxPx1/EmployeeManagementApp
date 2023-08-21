@@ -1,22 +1,26 @@
 package com.myappcompany.rob.employeemanagementapp.Entities;
 
-public class TimeEntry {
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "time_entries")
+public class TimeEntryEntity {
+    @PrimaryKey(autoGenerate = true)
     private int id;
+
     private int userId;
-    private String date;
     private long clockInTime;
     private long clockOutTime;
-    private double hours;
 
-    public TimeEntry(int id, int userId, String date, long clockInTime, long clockOutTime, double hours) {
-        this.id = id;
+    // Constructors, getters, setters, etc.
+
+    public TimeEntryEntity(int userId, long clockInTime, long clockOutTime) {
         this.userId = userId;
-        this.date = date;
         this.clockInTime = clockInTime;
         this.clockOutTime = clockOutTime;
-        this.hours = hours;
     }
 
+    // Getters and setters
     public int getId() {
         return id;
     }
@@ -33,14 +37,6 @@ public class TimeEntry {
         this.userId = userId;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public long getClockInTime() {
         return clockInTime;
     }
@@ -55,13 +51,5 @@ public class TimeEntry {
 
     public void setClockOutTime(long clockOutTime) {
         this.clockOutTime = clockOutTime;
-    }
-
-    public double getHours() {
-        return hours;
-    }
-
-    public void setHours(double hours) {
-        this.hours = hours;
     }
 }

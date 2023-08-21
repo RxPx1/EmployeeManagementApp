@@ -1,20 +1,23 @@
 package com.myappcompany.rob.employeemanagementapp.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.myappcompany.rob.employeemanagementapp.Entities.UserEntity;
 import com.myappcompany.rob.employeemanagementapp.R;
-import com.myappcompany.rob.employeemanagementapp.database.UserDatabaseHelper;
+import com.myappcompany.rob.employeemanagementapp.database.UserRepository;
 
 public class ChangeAdminAccount extends AppCompatActivity {
 
     private EditText newUsernameEditText;
     private EditText newPasscodeEditText;
     private Button saveButton;
-    private UserDatabaseHelper databaseHelper;
+    private UserRepository userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +27,7 @@ public class ChangeAdminAccount extends AppCompatActivity {
         newUsernameEditText = findViewById(R.id.new_adminusername_edit_text);
         newPasscodeEditText = findViewById(R.id.new_adminpasscode_edit_text);
         saveButton = findViewById(R.id.save_button);
-        databaseHelper = new UserDatabaseHelper(this);
+        userRepository = new UserRepository(this);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,7 +37,7 @@ public class ChangeAdminAccount extends AppCompatActivity {
 
                 if (!newUsername.isEmpty() && !newPasscode.isEmpty()) {
                     // Update admin login details in the database
-                    boolean updated = databaseHelper.updateAdminLogin(newUsername, newPasscode);
+                    boolean updated = updateAdminLogin(newUsername, newPasscode);
                     if (updated) {
                         Toast.makeText(ChangeAdminAccount.this, "Admin login details updated", Toast.LENGTH_SHORT).show();
                         finish(); // Close the activity and return to the AdminActivity
@@ -46,5 +49,16 @@ public class ChangeAdminAccount extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private boolean updateAdminLogin(String newUsername, String newPasscode) {
+        UserEntity admin = userRepository.getAdminUser();
+        if (admin != null) {
+            admin.setUsername(newUsername);
+            admin.setPasscode(newPasscode);
+            userRepository.updateUser(admin);
+            return true;
+        }
+        return false;
     }
 }

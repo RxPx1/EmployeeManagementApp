@@ -1,20 +1,22 @@
 package com.myappcompany.rob.employeemanagementapp.UI;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.myappcompany.rob.employeemanagementapp.Entities.UserEntity;
 import com.myappcompany.rob.employeemanagementapp.R;
-import com.myappcompany.rob.employeemanagementapp.database.TimekeepingDatabaseHelper;
-import com.myappcompany.rob.employeemanagementapp.database.UserDatabaseHelper;
-import com.myappcompany.rob.employeemanagementapp.Entities.User;
+import com.myappcompany.rob.employeemanagementapp.database.TimeEntryRepository;
+import com.myappcompany.rob.employeemanagementapp.database.UserRepository;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,18 +28,18 @@ public class AdminActivity extends AppCompatActivity {
     private Button addButton;
     private Button deleteButton;
     private Button changeAdminLoginButton;
-    private UserDatabaseHelper databaseHelper;
+    private UserRepository userRepository;
     private ArrayAdapter<String> userAdapter;
     private ArrayAdapter<String> userAdapter2;
     private Button resetTimeDatabaseButton;
-    private TimekeepingDatabaseHelper timekeepingDatabaseHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
 
-        databaseHelper = new UserDatabaseHelper(this);
+        userRepository = new UserRepository(this);
 
         userSpinner = findViewById(R.id.spinner2);
         userSpinner2 = findViewById(R.id.spinner);
@@ -59,15 +61,16 @@ public class AdminActivity extends AppCompatActivity {
 
         changeAdminLoginButton = findViewById(R.id.button9);
 
-        timekeepingDatabaseHelper = new TimekeepingDatabaseHelper(this);
+
         resetTimeDatabaseButton = findViewById(R.id.reset_time_database);
 
         resetTimeDatabaseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetTimeDatabase();
+                showResetConfirmationDialog();
             }
         });
+
 
         changeAdminLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +79,6 @@ public class AdminActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,16 +93,15 @@ public class AdminActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("AdminActivity", "Delete button clicked");
-                Object selectedUserObject = userSpinner.getSelectedItem();
-                String selectedUser = selectedUserObject.toString();
-                Log.d("AdminActivity", "Selected User: " + selectedUser);
-                databaseHelper.deleteUserByUsername(selectedUser); // Call the new deleteUser method
-                Log.d("AdminActivity", "Deleted user: " + selectedUser);
-                refreshUserSpinner();
-                refreshUserSpinner2();
-                Toast.makeText(AdminActivity.this, "User deleted: " + selectedUser, Toast.LENGTH_SHORT).show();
-                Toast.makeText(AdminActivity.this, "Error deleting user", Toast.LENGTH_SHORT).show();
+                String selectedUser = userSpinner.getSelectedItem().toString();
+                if (!selectedUser.isEmpty()) {
+                    userRepository.deleteUserByUsername(selectedUser);
+                    refreshUserSpinner();
+                    refreshUserSpinner2();
+                    Toast.makeText(AdminActivity.this, "User deleted: " + selectedUser, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AdminActivity.this, "Please select a user to delete", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -114,12 +115,11 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     private void refreshUserSpinner() {
-        List<User> userList = databaseHelper.getUserList();
-        Log.d("AdminActivity", "User List Size: " + userList.size());
+        List<UserEntity> userList = (List<UserEntity>) userRepository.getAllUsers();
 
         List<String> usernameList = new ArrayList<>();
 
-        for (User user : userList) {
+        for (UserEntity user : userList) {
             if (user.getUserID() != 1) {
                 usernameList.add(user.getUsername());
             }
@@ -136,12 +136,11 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     private void refreshUserSpinner2() {
-        List<User> userList = databaseHelper.getUserList();
-        Log.d("AdminActivity", "User List Size: " + userList.size());
+        List<UserEntity> userList = (List<UserEntity>) userRepository.getAllUsers();
 
         List<String> usernameList = new ArrayList<>();
 
-        for (User user : userList) {
+        for (UserEntity user : userList) {
             if (user.getUserID() != 1) {
                 usernameList.add(user.getUsername());
             }
@@ -157,10 +156,29 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
-    private void resetTimeDatabase() {
-        timekeepingDatabaseHelper.reopenDatabase();
-        timekeepingDatabaseHelper.getWritableDatabase().execSQL("DELETE FROM " + TimekeepingDatabaseHelper.TABLE_TIMEKEEPING);
-        Toast.makeText(this, "Time database reset", Toast.LENGTH_SHORT).show();
+    private void showResetConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Reset Database")
+                .setMessage("Are you sure you want to reset the database?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        resetTimeDatabase();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
-}
 
+    private void resetTimeDatabase() {
+        // Delete all time entries
+        TimeEntryRepository.deleteAllTimeEntries();
+
+        // Refresh the spinners after resetting
+        refreshUserSpinner();
+        refreshUserSpinner2();
+
+        Toast.makeText(this, "Database reset successful", Toast.LENGTH_SHORT).show();
+    }
+
+}

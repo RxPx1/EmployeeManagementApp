@@ -11,17 +11,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.myappcompany.rob.employeemanagementapp.Entities.User;
+import com.myappcompany.rob.employeemanagementapp.Entities.UserEntity;
 import com.myappcompany.rob.employeemanagementapp.R;
-import com.myappcompany.rob.employeemanagementapp.database.TimekeepingDatabaseHelper;
-import com.myappcompany.rob.employeemanagementapp.database.UserDatabaseHelper;
+import com.myappcompany.rob.employeemanagementapp.database.UserRepository;
+
 
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private UserDatabaseHelper databaseHelper;
-    private TimekeepingDatabaseHelper timedatabaseHelper;
+    private UserRepository userRepository;
+
     String username;
     String passcode;
 
@@ -30,15 +30,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        databaseHelper = new UserDatabaseHelper(this);
-        timedatabaseHelper = new TimekeepingDatabaseHelper(this);
+        userRepository = new UserRepository(this);
 
-        // Check if there are any users in the database
-        List<User> userList = databaseHelper.getAllUsers();
+
+        List<UserEntity> userList = (List<UserEntity>) userRepository.getAllUsers();
         if (userList.isEmpty()) {
             // If no users exist, add the "admin" user
-            databaseHelper.addUser("admin", "012345");
+            userRepository.addUser("admin", "012345");
         }
+
 
         Button loginButton = findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
                 String passcode = passcodeEditText.getText().toString();
 
                 // Verify user credentials against the database
-                User user = databaseHelper.getUserByUsernameAndPassword(username, passcode);
+                UserEntity user = userRepository.getUserByUsernameAndPassword(username, passcode);
 
                 if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(passcode)) {
                     if (user != null) {
@@ -76,10 +76,5 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }
-
-
-
-

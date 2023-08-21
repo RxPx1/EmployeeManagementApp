@@ -6,16 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.myappcompany.rob.employeemanagementapp.Entities.TimeEntryEntity;
 import com.myappcompany.rob.employeemanagementapp.R;
 import com.myappcompany.rob.employeemanagementapp.adapter.EmployeeHoursAdapter;
-import com.myappcompany.rob.employeemanagementapp.Entities.TimeEntry;
-import com.myappcompany.rob.employeemanagementapp.database.TimekeepingDatabaseHelper;
+import com.myappcompany.rob.employeemanagementapp.database.TimeEntryRepository;
+
 
 import java.util.List;
 
 public class SingleEmployeeHours extends AppCompatActivity {
 
-    private TimekeepingDatabaseHelper timekeepingDatabaseHelper;
+    private TimeEntryRepository timeEntryRepository;
     private RecyclerView recyclerView;
     private EmployeeHoursAdapter adapter;
 
@@ -24,13 +25,13 @@ public class SingleEmployeeHours extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single_employee_hours);
 
-        timekeepingDatabaseHelper = new TimekeepingDatabaseHelper(this);
+        timeEntryRepository = new TimeEntryRepository(this);
         recyclerView = findViewById(R.id.employeehours);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        int userID = getIntent().getIntExtra("userID", -1); // Get the userID from the intent
+        int userID = getIntent().getIntExtra("userID", -1);
 
-        List<TimeEntry> timeEntries = timekeepingDatabaseHelper.getTimeEntriesByUserID(userID);
+        List<TimeEntryEntity> timeEntries = timeEntryRepository.getTimeEntriesByUserID(userID);
 
         adapter = new EmployeeHoursAdapter(timeEntries);
         recyclerView.setAdapter(adapter);
